@@ -13,7 +13,7 @@ Eight viewport widths were checked: **320, 390, 700, 760, 768, 1024, 1440 and 19
 1. Inspected the first landscape and cinematic frames. Replaced the overly striped mountain shading with subtle granular layers and near-ridge canopy detail.
 2. Rebalanced room lighting and reduced visual noise from dust/orbital lines. Shifted the Quran framing so its title does not obscure the book; pulled the studio camera back to separate the monitor from the large editorial heading.
 3. Inspected actual closed-book, moving-page, open-book and studio frames. Inspected editorial, daily palette, teacher, gallery, ending and narrow-screen layouts. Corrected an off-screen skip-link positioning issue and checked the final source again.
-4. Corrected a degenerate zero-length tube segment in geometry generation, then recompiled and rendered all cinematic stages. Rechecked keyboard focus and context restoration rather than declaring success after an initial screenshot.
+4. Corrected a degenerate zero-length tube segment in geometry generation, then recompiled and rendered all cinematic stages. Rechecked keyboard focus and context restoration rather than declaring success after an initial screenshot. A stricter two-dimensional viewport check caught a stale WebGL canvas height when both viewport dimensions changed; a ResizeObserver now tracks settled container dimensions and the complete suite was rerun.
 
 Screenshots in the delivered source archive show the rendered design. `tools/render_check.py` regenerates four core screenshots with the same browser setup. `tests/test_browser.py` writes `test-report.json` and saves a real poster export.
 

@@ -1,4 +1,4 @@
-name: Verify Assyabab
+name: Verify and package Cahaya
 on:
   push:
     branches: [main]
@@ -6,9 +6,24 @@ on:
 permissions:
   contents: read
 jobs:
-  verify:
+  package:
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
-      - name: Verify repository initialization
-        run: test -f README.md
+      - name: Check JavaScript syntax
+        run: |
+          for file in src/*.js; do node --check "$file"; done
+      - name: Check Python syntax
+        run: python3 -m compileall -q tools tests
+      - name: Fetch checksum-pinned photographs
+        run: python3 tools/fetch_assets.py
+      - name: Build portable presentation
+        run: python3 tools/build_offline.py
+      - name: Store offline HTML
+        uses: actions/upload-artifact@v4
+        with:
+          name: ASSYABAB-CAHAYA
+          path: ASSYABAB-CAHAYA.html
+          if-no-files-found: error
+          retention-days: 14
