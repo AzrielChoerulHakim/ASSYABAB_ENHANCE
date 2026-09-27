@@ -1,0 +1,37 @@
+{
+  "halaqah.avif": {
+    "url": "https://raw.githubusercontent.com/AzrielChoerulHakim/assyabab_pesantren-multimedia/043c819554b6f804ddc5f7ffb9aa3965d21708c8/assets/halaqah.avif",
+    "sha256": "717550192e313ed7d1ee715e83e3d0bf630bc4ecd2b0e6526e8572411d57438e",
+    "bytes": 11017
+  },
+  "mudir.avif": {
+    "url": "https://raw.githubusercontent.com/AzrielChoerulHakim/assyabab_pesantren-multimedia/043c819554b6f804ddc5f7ffb9aa3965d21708c8/assets/mudir.avif",
+    "sha256": "2a0b74b675c80ffc65238bc5a598ae646227478542738482b7ee3c1d3a2cf05e",
+    "bytes": 2964
+  },
+  "masjid.avif": {
+    "url": "https://raw.githubusercontent.com/AzrielChoerulHakim/assyabab_pesantren-multimedia/043c819554b6f804ddc5f7ffb9aa3965d21708c8/assets/masjid.avif",
+    "sha256": "48d8063bb10d3672ce8a7de16d23d6009534185bc91536b8ab2eaf65dea0d448",
+    "bytes": 6088
+  },
+  "lapangan.avif": {
+    "url": "https://raw.githubusercontent.com/AzrielChoerulHakim/assyabab_pesantren-multimedia/043c819554b6f804ddc5f7ffb9aa3965d21708c8/assets/lapangan.avif",
+    "sha256": "53c35b53a3407c9e3fe09906a62a4bf93c2bf99da9ad39ea5ee35d6099b377d6",
+    "bytes": 4311
+  },
+  "multimedia.avif": {
+    "url": "https://raw.githubusercontent.com/AzrielChoerulHakim/assyabab_pesantren-multimedia/043c819554b6f804ddc5f7ffb9aa3965d21708c8/assets/multimedia.avif",
+    "sha256": "72794d4490c1dc7801bbcd331c58f6f55e8fecaf3e7ede48c516c9f7c56a8469",
+    "bytes": 7520
+  },
+  "asrama.avif": {
+    "url": "https://raw.githubusercontent.com/AzrielChoerulHakim/assyabab_pesantren-multimedia/043c819554b6f804ddc5f7ffb9aa3965d21708c8/assets/asrama.avif",
+    "sha256": "4be796e11e662950100f34837eb443afb0e8d67e4ec2233a2fb5ebdb8ef9bc5e",
+    "bytes": 3378
+  },
+  "salak.avif": {
+    "url": "https://raw.githubusercontent.com/AzrielChoerulHakim/assyabab_pesantren-multimedia/043c819554b6f804ddc5f7ffb9aa3965d21708c8/assets/salak.avif",
+    "sha256": "74181cf7ee0f65d6794289b13cfcfaabdb9149dea4a9389267ea2facb016b5d8",
+    "bytes": 5148
+  }
+}
