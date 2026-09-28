@@ -1,0 +1,49 @@
+{
+  "source": "Owner-uploaded 18622.mp4",
+  "source_sha256": "bbc0c53aba271c321bbb45f127c0736e22a0b898bdcf6a386c8e4b7bd01dc957",
+  "duration_seconds": 10,
+  "fps": 24,
+  "source_dimensions": [
+    1280,
+    720
+  ],
+  "audio": "Removed in delivery variants; original preserved outside repository.",
+  "keyframe_interval": 12,
+  "chapters": {
+    "source": [
+      0,
+      0.24
+    ],
+    "light": [
+      0.24,
+      0.57
+    ],
+    "creation": [
+      0.57,
+      1
+    ]
+  },
+  "note": "AI-generated illustrative video supplied by the owner. Not documentary campus footage; Arabic text has not been verified.",
+  "files": {
+    "cahaya-creation.jpg": {
+      "bytes": 88099,
+      "sha256": "dcbed59990b3af0cdf51071932a4ccfca864e8cd1a5c35d572eeaf66c4ba2889"
+    },
+    "cahaya-desktop.mp4": {
+      "bytes": 3287269,
+      "sha256": "381bac8bcb21516d9585637033f5b55b5b15f0c29198ccf6ec982f2ffd1d4b32"
+    },
+    "cahaya-light.jpg": {
+      "bytes": 94505,
+      "sha256": "7b08f1bbe4b58d9ef9f2d4a7b1a800013842f6f4c1abf7342eef745431a029e5"
+    },
+    "cahaya-mobile.mp4": {
+      "bytes": 1494367,
+      "sha256": "99b7e9abe1050103839dbae12dd27a82e8457bac037e6ec0f3675ef7930ce4f0"
+    },
+    "cahaya-source.jpg": {
+      "bytes": 109311,
+      "sha256": "463e6ad1f816d6cf1b38d5a660f295499b6ecbec55622125d3a765fdd3c937c6"
+    }
+  }
+}
