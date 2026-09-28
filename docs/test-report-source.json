@@ -1,5 +1,5 @@
 {
-  "method": "Headless Chromium; actual video decode, bidirectional scroll seeking, optional local audio and UI regression. Not a hardware performance or Safari test.",
+  "method": "Headless Chromium; actual video decode, bidirectional scroll seeking, landscape pixels, SVG/CSS atmosphere, optional local audio and UI regression. Not a hardware performance or Safari test.",
   "mode": "served source",
   "checks": {
     "video_element_replaces_webgl": true,
@@ -44,6 +44,29 @@
     "audio_volume_changes": true,
     "audio_explicit_stop": true,
     "audio_no_errors": true,
+    "sunlight_and_cloud_pixels_animate": true,
+    "wind_grass_pixels_respond": true,
+    "wind_mist_pixels_respond": true,
+    "night_firefly_pixels_animate": true,
+    "night_reflection_pixels_animate": true,
+    "landscape_still_freezes_all_pixels": true,
+    "nature_layers_noninteractive": true,
+    "shared_scroll_wind_reaches_landscapes_and_leaves": true,
+    "wordmark_depth_moves_with_scroll": true,
+    "foreground_wordmark_mist_moves": true,
+    "shared_wind_reverses_with_scroll": true,
+    "entry_fog_reveals_at_chapter_boundary": true,
+    "exit_light_haze_animates": true,
+    "geometry_lines_draw_on_entry": true,
+    "geometry_rotates_on_shared_clock": true,
+    "geometry_retraces_on_reverse_scroll": true,
+    "night_animation_integrated_in_visible_canvas": true,
+    "manual_pause_freezes_nature_pixels": true,
+    "manual_pause_freezes_nature_styles": true,
+    "manual_pause_zeroes_scroll_wind": true,
+    "reduced_motion_freezes_nature_pixels": true,
+    "reduced_motion_freezes_nature_styles": true,
+    "reduced_motion_full_geometry_and_hidden_mist": true,
     "video_metadata_and_decode": true,
     "scroll_seek_opening": true,
     "scroll_seek_curtain": true,
@@ -58,9 +81,13 @@
     "viewport_320x740": true,
     "caption_clear_320x740": true,
     "sound_clear_320x740": true,
+    "mobile_hero_cta_clear_320": true,
+    "mobile_hero_cta_not_intercepted_320": true,
     "viewport_390x844": true,
     "caption_clear_390x844": true,
     "sound_clear_390x844": true,
+    "mobile_hero_cta_clear_390": true,
+    "mobile_hero_cta_not_intercepted_390": true,
     "viewport_700x960": true,
     "caption_clear_700x960": true,
     "sound_clear_700x960": true,
@@ -291,38 +318,78 @@
   "seeks": [
     {
       "progress": 0.08,
-      "settled_ms": 12
+      "settled_ms": 457
     },
     {
       "progress": 0.48,
-      "settled_ms": 355
+      "settled_ms": 346
     },
     {
       "progress": 0.9,
-      "settled_ms": 358
+      "settled_ms": 364
     },
     {
       "progress": 0.22,
-      "settled_ms": 413
+      "settled_ms": 416
     },
     {
       "progress": 1,
-      "settled_ms": 414
+      "settled_ms": 431
     }
   ],
   "errors": [],
   "file_hashes": {
-    "index.html": "8728597c0b0f1eda5d35ffa00051645f1400cf88c041b24f02ce528d9aeef35e",
+    "index.html": "e2a98d9479b627f96762d6af4dedbeb3909f29aedbf8ae0a148415a2479e66ff",
     "src\\ambience.js": "3e664c4e1ec69417c28ad6310997b4b7226514bfc8b1a928a00466017e803c3c",
-    "src\\app.js": "63e877c50e77f8fc44bf480079ed284dcb4644b7d3dc32a345a3e198cbc5c74a",
+    "src\\app.js": "4deaa7c8f646c909cd245ac940ea97953d72160545b4a33ab5471a438586561b",
+    "src\\atmosphere.js": "1452917822b7eacd65c753117c7f15b6181378504ad8e15786def60d440ee65a",
     "src\\content.js": "233fbca53112158f57f9b27596cc747cd2bfa7e0b743abcc7516953fd7266955",
-    "src\\landscape.js": "01ea28adda55e2713536ec67b0d3303ef48d72b5797a247359e31d0ecc2186b8",
+    "src\\landscape.js": "498260a99e911cbf0b878fdc3f596ac9862d07c6077aca520e26aae7342b503a",
     "src\\scroll-video.js": "aa3dbe811c3fe1a2f34010c8c88b0e824d269684dded3fb05bcb1ad42ed7164c",
     "styles\\ambience.css": "bd9cded6376ff7391b6b0b41cd312cbc90bb2b8e7dee1d5c3f73491e0053ab54",
+    "styles\\atmosphere.css": "f876197a2cdea37159df84f44b78efdf5cff2b7f2cf9e59db34cf4e7edfe860f",
     "styles\\film.css": "d74c43c964d7d626f1a939f9d10650080069994feb3a795e28a4c72fc89f24b5",
-    "styles\\main.css": "7bcd480f1f7ddcd7ced70b8018858527940b67fda56f2e50012a033da7514701"
+    "styles\\main.css": "b0bd3e9687d5dbcdf2512f44bb8babe795044076d9f8c994808f99d9e7c7bffa"
   },
   "browser": "154.0.4258.37",
+  "nature_pixels": {
+    "daylight": {
+      "upperChangedPixels": 10257,
+      "grassChangedPixels": 4712,
+      "mistChangedPixels": 16399,
+      "diagnostics": {
+        "day": 0,
+        "appliedWind": 0.8,
+        "grassTufts": 10,
+        "grassBlades": 40,
+        "sunlightShafts": 4,
+        "thinClouds": 3,
+        "fireflies": 0,
+        "reflections": 0,
+        "birdCount": 9,
+        "frozenTime": 9,
+        "still": false
+      }
+    },
+    "night": {
+      "changedPixels": 9368,
+      "reflectionChangedPixels": 1293,
+      "diagnostics": {
+        "day": 3,
+        "appliedWind": 0,
+        "grassTufts": 10,
+        "grassBlades": 40,
+        "sunlightShafts": 0,
+        "thinClouds": 0,
+        "fireflies": 9,
+        "reflections": 6,
+        "birdCount": 0,
+        "frozenTime": 17,
+        "still": false
+      }
+    },
+    "stillChangedPixels": 0
+  },
   "video": {
     "duration": 9.5,
     "width": 1280,

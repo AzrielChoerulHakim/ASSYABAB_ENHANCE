@@ -24,7 +24,7 @@ URL = os.environ.get('ASSYABAB_TEST_URL')
 OUT = ROOT / 'docs'
 SHOTS = OUT / 'screenshots'
 SHOTS.mkdir(exist_ok=True, parents=True)
-report = {'method': 'Headless Chromium; actual video decode, bidirectional scroll seeking, optional local audio and UI regression. Not a hardware performance or Safari test.',
+report = {'method': 'Headless Chromium; actual video decode, bidirectional scroll seeking, landscape pixels, SVG/CSS atmosphere, optional local audio and UI regression. Not a hardware performance or Safari test.',
           'mode': 'served source' if URL else 'portable export', 'checks': {}, 'viewports': [], 'seeks': [], 'errors': []}
 
 
@@ -82,6 +82,137 @@ def frame_signature(page):
         const pixels=context.getImageData(0,0,32,18).data;
         return Array.from(pixels).filter((_,i)=>i%4!==3).join(',');
     }''')
+
+
+def canvas_signature(page, selector):
+    """Hash actual canvas pixels, unaffected by overlaid captions or the clock."""
+    return page.locator(selector).evaluate('''canvas => {
+        const pixels=canvas.getContext('2d').getImageData(0,0,canvas.width,canvas.height).data;
+        let hash=2166136261;
+        for(let i=0;i<pixels.length;i++) hash=Math.imul(hash^pixels[i],16777619);
+        return hash>>>0;
+    }''')
+
+
+def check_landscape_pixels(page):
+    """Exercise the real renderer deterministically, without screen timing noise."""
+    result = page.evaluate('''() => {
+        const canvas=document.createElement('canvas');
+        canvas.style.cssText='position:fixed;left:-10000px;top:0;width:640px;height:360px;visibility:hidden;pointer-events:none';
+        document.body.append(canvas);
+        const scene=new AssyababLandscape(canvas,813), context=canvas.getContext('2d');
+        const capture=(x,y,w,h)=>context.getImageData(Math.floor(x*canvas.width),Math.floor(y*canvas.height),Math.floor(w*canvas.width),Math.floor(h*canvas.height)).data;
+        const changed=(a,b)=>{let count=0;for(let i=0;i<a.length;i+=4)if(Math.abs(a[i]-b[i])+Math.abs(a[i+1]-b[i+1])+Math.abs(a[i+2]-b[i+2])>2)count++;return count;};
+        try {
+            scene.wind=-.8; scene.render(1);
+            const skyA=capture(.58,.02,.4,.45),grassA=capture(0,.85,1,.15),mistA=capture(.15,.56,.7,.18);
+            scene.wind=.8; scene.render(9);
+            const daylight={upperChangedPixels:changed(skyA,capture(.58,.02,.4,.45)),
+                grassChangedPixels:changed(grassA,capture(0,.85,1,.15)),
+                mistChangedPixels:changed(mistA,capture(.15,.56,.7,.18)),diagnostics:{...scene.diagnostics}};
+            scene.still=true; scene.render(10);
+            const frozen=capture(0,0,1,1);
+            scene.wind=-1;scene.pointer=[1,-1];scene.zoom=.8;scene.render(40);
+            const stillChangedPixels=changed(frozen,capture(0,0,1,1));
+            scene.still=false;scene.pointer=[0,0];scene.zoom=0;scene.wind=0;scene.setDay(3);scene.render(3);
+            const nightA=capture(.18,.68,.7,.24),reflectionA=capture(.18,.92,.7,.08);
+            scene.render(17);
+            const night={changedPixels:changed(nightA,capture(.18,.68,.7,.24)),
+                reflectionChangedPixels:changed(reflectionA,capture(.18,.92,.7,.08)),diagnostics:{...scene.diagnostics}};
+            return {daylight,night,stillChangedPixels};
+        } finally {scene.dispose();canvas.remove();}
+    }''')
+    report['nature_pixels'] = result
+    day = result['daylight']; night = result['night']
+    ok('sunlight_and_cloud_pixels_animate', day['upperChangedPixels'] > 20 and day['diagnostics']['sunlightShafts'] > 0 and day['diagnostics']['thinClouds'] > 0)
+    ok('wind_grass_pixels_respond', day['grassChangedPixels'] > 20 and day['diagnostics']['grassBlades'] > 0)
+    ok('wind_mist_pixels_respond', day['mistChangedPixels'] > 20)
+    ok('night_firefly_pixels_animate', night['changedPixels'] > 20 and night['diagnostics']['fireflies'] > 0)
+    ok('night_reflection_pixels_animate', night['reflectionChangedPixels'] > 20 and night['diagnostics']['reflections'] > 0)
+    ok('landscape_still_freezes_all_pixels', result['stillChangedPixels'] == 0)
+
+
+def nature_style_snapshot(page):
+    return page.evaluate('''() => ({
+        wordmark:getComputedStyle(document.querySelector('.hero-wordmark')).translate,
+        mist:getComputedStyle(document.querySelector('.atmosphere-mist-front')).transform,
+        orbit:getComputedStyle(document.querySelector('.atmosphere-geometry-orbit')).transform,
+        strokes:[...document.querySelectorAll('.atmosphere-geometry-stroke')].map(e=>getComputedStyle(e).strokeDashoffset),
+        leaves:[...document.querySelectorAll('.ambience-layer')].map(e=>getComputedStyle(e).transform)
+    })''')
+
+
+def check_nature_experience(page):
+    check_landscape_pixels(page)
+    page.emulate_media(reduced_motion='no-preference')
+    page.evaluate('scrollTo({top:0,behavior:"instant"})')
+    page.wait_for_timeout(2200)  # Let the existing opening title animation settle.
+    ok('nature_layers_noninteractive', page.evaluate('''[...document.querySelectorAll('.atmosphere-decoration')].length===3 &&
+        [...document.querySelectorAll('.atmosphere-decoration')].every(e=>e.getAttribute('aria-hidden')==='true' && getComputedStyle(e).pointerEvents==='none' && !e.querySelector('a,button,input,[tabindex]'))'''))
+    before = nature_style_snapshot(page)
+    entry_before = page.locator('.atmosphere-entry-fog').evaluate('e=>Number(getComputedStyle(e).opacity)')
+    page.evaluate('scrollTo({top:document.querySelector("#beranda").offsetHeight*.35,behavior:"instant"})')
+    page.wait_for_function('AssyababDebug.nature().wind>.005 && AssyababAtmosphereDebug.wind>0 && new DOMMatrixReadOnly(getComputedStyle(document.querySelector(".ambience-hero")).transform).m41>0')
+    down = page.evaluate('''() => {const d=AssyababDebug.nature(),land=AssyababDebug.landscapes();return {
+        wind:d.wind,heroWind:land.hero.wind,dailyWind:land.daily.wind,atmosphereWind:d.atmosphere.wind,
+        leafX:new DOMMatrixReadOnly(getComputedStyle(document.querySelector('.ambience-hero')).transform).m41};}''')
+    ok('shared_scroll_wind_reaches_landscapes_and_leaves', down['wind'] > 0 and abs(down['heroWind']-down['wind']) < .001 and abs(down['dailyWind']-down['wind']) < .001 and down['atmosphereWind'] > 0 and abs(down['atmosphereWind']-down['wind']) < .2 and down['leafX'] > 0)
+    after = nature_style_snapshot(page)
+    ok('wordmark_depth_moves_with_scroll', before['wordmark'] != after['wordmark'] and page.locator('.hero-wordmark').evaluate('e=>getComputedStyle(e).textShadow!=="none"'))
+    ok('foreground_wordmark_mist_moves', before['mist'] != after['mist'])
+    page.evaluate('scrollTo({top:document.querySelector("#beranda").offsetHeight*.10,behavior:"instant"})')
+    page.wait_for_function('AssyababDebug.nature().wind<-.005 && new DOMMatrixReadOnly(getComputedStyle(document.querySelector(".ambience-hero")).transform).m41<0')
+    ok('shared_wind_reverses_with_scroll', page.locator('.ambience-hero').evaluate('e=>new DOMMatrixReadOnly(getComputedStyle(e).transform).m41<0'))
+
+    page.evaluate('scrollTo({top:document.querySelector("#cahaya").offsetTop-innerHeight*.4,behavior:"instant"})')
+    page.wait_for_timeout(150)
+    ok('entry_fog_reveals_at_chapter_boundary', page.locator('.atmosphere-entry-fog').evaluate('e=>Number(getComputedStyle(e).opacity)') > entry_before + .1)
+    page.locator('#tentang').scroll_into_view_if_needed()
+    page.wait_for_timeout(200)
+    haze = page.locator('.atmosphere-light-haze').evaluate('e=>({opacity:Number(getComputedStyle(e).opacity),transform:getComputedStyle(e).transform,background:getComputedStyle(e).backgroundImage})')
+    page.wait_for_timeout(350)
+    ok('exit_light_haze_animates', haze['opacity'] > 0 and 'gradient' in haze['background'] and haze['transform'] != page.locator('.atmosphere-light-haze').evaluate('e=>getComputedStyle(e).transform'))
+
+    # Enter, complete and retrace the actual SVG line drawing; rotation uses the shared clock.
+    page.evaluate('''() => {const art=document.querySelector('.program-art');scrollTo({top:scrollY+art.getBoundingClientRect().top-innerHeight*.94,behavior:'instant'});}''')
+    page.wait_for_timeout(200)
+    starting_strokes = page.locator('.atmosphere-geometry-stroke').evaluate_all('els=>els.map(e=>parseFloat(getComputedStyle(e).strokeDashoffset))')
+    page.evaluate('''() => {const art=document.querySelector('.program-art');scrollTo({top:scrollY+art.getBoundingClientRect().top-innerHeight*.22,behavior:'instant'});}''')
+    page.wait_for_timeout(200)
+    full_strokes = page.locator('.atmosphere-geometry-stroke').evaluate_all('els=>els.map(e=>parseFloat(getComputedStyle(e).strokeDashoffset))')
+    ok('geometry_lines_draw_on_entry', len(full_strokes) >= 4 and sum(starting_strokes) > sum(full_strokes) + 100 and max(full_strokes) < 1)
+    rotation = page.locator('.atmosphere-geometry-orbit').evaluate('e=>getComputedStyle(e).transform')
+    page.wait_for_timeout(450)
+    ok('geometry_rotates_on_shared_clock', rotation != page.locator('.atmosphere-geometry-orbit').evaluate('e=>getComputedStyle(e).transform'))
+    page.evaluate('''() => {const art=document.querySelector('.program-art');scrollTo({top:scrollY+art.getBoundingClientRect().top-innerHeight*.75,behavior:'instant'});}''')
+    page.wait_for_timeout(200)
+    ok('geometry_retraces_on_reverse_scroll', sum(page.locator('.atmosphere-geometry-stroke').evaluate_all('els=>els.map(e=>parseFloat(getComputedStyle(e).strokeDashoffset))')) > sum(full_strokes) + 100)
+
+    page.locator('[data-day="3"]').click()
+    page.wait_for_timeout(350)
+    night_before = canvas_signature(page, '#day-landscape')
+    page.wait_for_timeout(550)
+    ok('night_animation_integrated_in_visible_canvas', night_before != canvas_signature(page, '#day-landscape') and page.evaluate('AssyababDebug.nature().daily.fireflies>0 && AssyababDebug.nature().daily.reflections>0'))
+    page.screenshot(path=str(SHOTS / 'nature-night.png'), timeout=120000)
+
+    # Real controls freeze both the canvas pixels and SVG/CSS decorations.
+    page.locator('#motion-toggle').click(); page.wait_for_function('AssyababDebug.nature().quiet')
+    page.wait_for_timeout(300)
+    frozen_canvas = canvas_signature(page, '#day-landscape'); frozen_style = nature_style_snapshot(page)
+    page.mouse.move(100, 120); page.wait_for_timeout(550)
+    ok('manual_pause_freezes_nature_pixels', frozen_canvas == canvas_signature(page, '#day-landscape'))
+    ok('manual_pause_freezes_nature_styles', frozen_style == nature_style_snapshot(page))
+    ok('manual_pause_zeroes_scroll_wind', page.evaluate('AssyababDebug.nature().wind===0 && AssyababAtmosphereDebug.wind===0'))
+    page.locator('#motion-toggle').click(); page.wait_for_function('!AssyababDebug.nature().quiet')
+    page.emulate_media(reduced_motion='reduce'); page.wait_for_function('AssyababDebug.nature().quiet')
+    page.wait_for_timeout(350)
+    frozen_canvas = canvas_signature(page, '#day-landscape'); frozen_style = nature_style_snapshot(page)
+    page.wait_for_timeout(550)
+    ok('reduced_motion_freezes_nature_pixels', frozen_canvas == canvas_signature(page, '#day-landscape'))
+    ok('reduced_motion_freezes_nature_styles', frozen_style == nature_style_snapshot(page))
+    ok('reduced_motion_full_geometry_and_hidden_mist', page.evaluate('''[...document.querySelectorAll('.atmosphere-geometry-stroke')].every(e=>parseFloat(getComputedStyle(e).strokeDashoffset)===0) && [...document.querySelectorAll('.atmosphere-decoration')].every(e=>getComputedStyle(e).display==='none'||getComputedStyle(e).visibility==='hidden')'''))
+    page.locator('[data-day="0"]').click()
+    page.emulate_media(reduced_motion='no-preference'); page.wait_for_function('!AssyababDebug.nature().quiet')
 
 
 def main():
@@ -176,6 +307,8 @@ def main():
         ok('audio_no_errors', page.evaluate('AssyababAmbience.error') is None)
         page.locator('.ambience-settings').click()
 
+        check_nature_experience(page)
+
         # Actual decode and scroll-driven motion, including reverse and final frame.
         page.emulate_media(reduced_motion='no-preference')
         page.wait_for_function('document.documentElement.classList.contains("js-motion")')
@@ -211,6 +344,17 @@ def main():
             ok('viewport_' + str(width) + 'x' + str(height), row['scrollWidth'] <= width + 1 and abs(row['video'][0] - width) < 2 and 100 <= row['video'][1] <= row['sticky'][1] + 2 and row['sticky'][1] <= height + 2)
             ok('caption_clear_' + str(width) + 'x' + str(height), row['captionClear'])
             ok('sound_clear_' + str(width) + 'x' + str(height), row['soundClear'])
+            if (width, height) in [(320, 740), (390, 844)]:
+                page.evaluate('scrollTo({top:0,behavior:"instant"})'); page.wait_for_timeout(300)
+                hero = page.evaluate('''() => {
+                    const button=document.querySelector('[data-play-film]'),a=button.getBoundingClientRect(),b=document.querySelector('.ambience-dock').getBoundingClientRect();
+                    const visible=a.top>=0&&a.bottom<=innerHeight;
+                    const overlap=a.left<b.right&&a.right>b.left&&a.top<b.bottom&&a.bottom>b.top;
+                    const hit=visible ? document.elementFromPoint((a.left+a.right)/2,(a.top+a.bottom)/2)?.closest('[data-play-film]')===button : true;
+                    return {visible,overlap,hit};
+                }''')
+                ok('mobile_hero_cta_clear_' + str(width), not hero['visible'] or not hero['overlap'])
+                ok('mobile_hero_cta_not_intercepted_' + str(width), hero['hit'])
         page.set_viewport_size({'width': 390, 'height': 844}); scroll_film(page, .88); wait_frame(page, .88)
         page.screenshot(path=str(SHOTS / 'film-mobile-studio.png'), timeout=120000)
         page.set_viewport_size({'width': 1440, 'height': 960}); scroll_film(page, .35); wait_frame(page, .35)

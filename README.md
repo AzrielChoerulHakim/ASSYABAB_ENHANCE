@@ -31,8 +31,14 @@ supports range requests. This commit does not change hosting configuration.
   with an explicit retry; the rest of the website still works.
 - Reduced motion uses a stationary scene with explicit chapter selection. The
   manual motion pause keeps the page height stable and freezes decorative motion.
-- Sparse leaves drift through the opening landscape; quiet rings and flecks appear
-  in the daily scene. Existing birds are preserved; no extra birds were added.
+- Scroll gives grass, leaves and valley mist a shared, signed breeze which eases
+  back to calm. Thin clouds pass through daylight shafts over the mountains.
+- Mist gives the large opening wordmark depth and connects the landscape to the
+  film; a warm light transition leads out toward the education story.
+- The education ornament draws itself as it enters the viewport, then rotates
+  gently. The night landscape has warm fireflies and small reflections on water.
+- These effects share the page's animation clock and respect motion pause,
+  reduced motion and hidden tabs. Existing birds remain; no extra birds were added.
 - **Suara air** is optional synthesized water ambience, generated on-device with
   Web Audio. It starts only after a click, has a volume control, fades off, and
   suspends in hidden tabs. It is not a campus recording or a Quran recitation.
@@ -83,9 +89,11 @@ portable export. See `docs/QA.md` for the exact verification and its limits.
 | `src/scroll-video.js` | Lazy loading, coalesced seeking, smoothing and fallback |
 | `src/ambience.js` | Optional water audio and subtle landscape details |
 | `src/landscape.js` | Existing native Canvas landscapes and birds |
+| `src/atmosphere.js` | Shared-wind layers, mist transitions, wordmark depth and geometry |
 | `src/app.js` | Page interaction, chapters, dialogs and creative tools |
 | `styles/film.css` | Responsive film composition |
 | `styles/ambience.css` | Leaves, ripples and audio controls |
+| `styles/atmosphere.css` | Mist, light transitions and progressive ornament styling |
 | `tools/prepare_video.py` | Reproducible video grade and encoding |
 
 This is still a presentation site: no enrollment database, payments, analytics,

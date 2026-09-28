@@ -1,0 +1,36 @@
+/* Atmospheric depth belongs to the landscape: no full-page particle layer. */
+.atmosphere-decoration,.atmosphere-decoration *{pointer-events:none!important;user-select:none}
+.atmosphere-decoration{position:absolute;overflow:hidden;contain:layout paint}
+.atmosphere-decoration i{display:block;position:absolute}
+
+/* The same low cloud passes across the two sides of the chapter boundary. */
+.atmosphere-entry-fog{left:0;right:0;top:0;height:300px;transform:translateY(-50%);z-index:2;opacity:0;mask-image:linear-gradient(transparent,#000 23%,#000 68%,transparent);-webkit-mask-image:linear-gradient(transparent,#000 23%,#000 68%,transparent)}
+.atmosphere-fog-bank{inset:0 -12%;transform:translate3d(var(--atmosphere-drift,0px),0,0);background:radial-gradient(ellipse at 9% 54%,#91a89b9e 0,transparent 26%),radial-gradient(ellipse at 34% 60%,#a8baa58c 0,transparent 30%),radial-gradient(ellipse at 69% 46%,#aebdac8c 0,transparent 33%),radial-gradient(ellipse at 96% 58%,#9cad9c9e 0,transparent 27%);filter:blur(13px);will-change:transform}
+.atmosphere-fog-bank-near{inset:18% -16% -6%;transform:translate3d(var(--atmosphere-drift-back,0px),0,0);background:radial-gradient(ellipse at 15% 47%,#c5cfb970 0,transparent 29%),radial-gradient(ellipse at 58% 58%,#cfdbc06b 0,transparent 36%),radial-gradient(ellipse at 87% 42%,#b4c5ad63 0,transparent 27%);filter:blur(16px)}
+
+/* A warm wash meets the paper; the bright seam stays below the story and controls. */
+.atmosphere-manifesto{position:relative;isolation:isolate}
+.atmosphere-manifesto>:not(.atmosphere-exit-glow){position:relative;z-index:1}
+.atmosphere-exit-glow{top:-180px;left:0;right:0;height:300px;z-index:0}
+.atmosphere-light-haze{inset:0 -12%;transform:translate3d(var(--atmosphere-drift,0px),0,0);opacity:var(--atmosphere-light,.65);background:radial-gradient(ellipse at 28% 70%,#dcc69d96 0,transparent 43%),radial-gradient(ellipse at 76% 54%,#eee0b38a 0,transparent 39%);filter:blur(17px);will-change:transform}
+.atmosphere-light-paper{inset:0;background:linear-gradient(180deg,#efece400 0%,#efece40a 18%,#efece440 36%,#efece4e8 60%,var(--paper,#efece4) 77%)}
+
+/* The inscription sits within the valley: a little depth behind and mist in front. */
+.hero-wordmark.atmosphere-wordmark{text-shadow:0 1px 0 #d3d9c8,0 2px 0 #bbc8b9,0 4px 0 #86a39452,0 12px 20px #0d393b3d,0 28px 48px #092d3530;will-change:translate}
+.atmosphere-wordmark-mist{left:0;right:0;z-index:4;opacity:.66;mask-image:linear-gradient(transparent,#000 25%,#000 70%,transparent);-webkit-mask-image:linear-gradient(transparent,#000 25%,#000 70%,transparent)}
+.atmosphere-mist-back{inset:-5% -15%;transform:translate3d(var(--atmosphere-drift-back,0px),0,0);background:radial-gradient(ellipse at 19% 52%,#acbfaa87 0,transparent 22%),radial-gradient(ellipse at 65% 62%,#c0cab372 0,transparent 30%),radial-gradient(ellipse at 96% 35%,#adc3ad75 0,transparent 27%);filter:blur(8px);will-change:transform}
+.atmosphere-mist-front{inset:5% -15% -10%;transform:translate3d(var(--atmosphere-drift,0px),0,0);background:radial-gradient(ellipse at 37% 58%,#6e958680 0,transparent 33%),radial-gradient(ellipse at 84% 59%,#8ba8969c 0,transparent 30%);filter:blur(12px);will-change:transform}
+
+/* SVG path lengths allow the ornament to be drawn accurately at any screen size. */
+.program-symbol svg.atmosphere-geometry{opacity:.82}
+.atmosphere-geometry-orbit{transform-origin:200px 200px}
+.atmosphere-geometry-stroke{stroke-width:1.25;stroke-linecap:round;vector-effect:non-scaling-stroke}
+.atmosphere-quiet{visibility:hidden!important}
+body.reduced-motion .atmosphere-decoration{visibility:hidden!important}
+body.reduced-motion .hero-wordmark.atmosphere-wordmark{translate:0 0!important}
+body.reduced-motion .atmosphere-geometry-stroke{stroke-dashoffset:0!important}
+@media(max-width:760px){.atmosphere-entry-fog{height:220px}.atmosphere-exit-glow{top:-140px;height:250px}.atmosphere-wordmark-mist{opacity:.55}.atmosphere-fog-bank{filter:blur(9px)}.atmosphere-light-haze{filter:blur(12px)}.atmosphere-geometry-stroke{stroke-width:1.1}}
+@media(prefers-reduced-motion:reduce){.atmosphere-decoration{display:none!important}.hero-wordmark.atmosphere-wordmark{translate:0 0!important}.atmosphere-geometry-stroke{stroke-dashoffset:0!important}}
+@media print{.atmosphere-decoration{display:none!important}.atmosphere-geometry-stroke{stroke-dashoffset:0!important}}
+/* Leave the opening invitation a clear row above the floating sound control. */
+@media(max-width:760px){.hero-bottom{bottom:115px}}
