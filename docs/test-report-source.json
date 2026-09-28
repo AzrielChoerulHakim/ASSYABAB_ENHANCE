@@ -1,6 +1,6 @@
 {
   "method": "Headless Chromium; actual video decode, bidirectional scroll seeking, optional local audio and UI regression. Not a hardware performance or Safari test.",
-  "mode": "portable export",
+  "mode": "served source",
   "checks": {
     "video_element_replaces_webgl": true,
     "video_muted_inline_no_autoplay": true,
@@ -91,7 +91,6 @@
     "film_stop": true,
     "no_javascript_errors": true,
     "no_app_errors": true,
-    "portable_no_automatic_network_calls": true,
     "audio_reload_defaults_off": true,
     "mobile_encode_selected": true,
     "video_failure_fallback": true,
@@ -292,23 +291,23 @@
   "seeks": [
     {
       "progress": 0.08,
-      "settled_ms": 11
+      "settled_ms": 12
     },
     {
       "progress": 0.48,
-      "settled_ms": 371
+      "settled_ms": 355
     },
     {
       "progress": 0.9,
-      "settled_ms": 363
+      "settled_ms": 358
     },
     {
       "progress": 0.22,
-      "settled_ms": 410
+      "settled_ms": 413
     },
     {
       "progress": 1,
-      "settled_ms": 415
+      "settled_ms": 414
     }
   ],
   "errors": [],
@@ -323,7 +322,6 @@
     "styles\\film.css": "d74c43c964d7d626f1a939f9d10650080069994feb3a795e28a4c72fc89f24b5",
     "styles\\main.css": "7bcd480f1f7ddcd7ced70b8018858527940b67fda56f2e50012a033da7514701"
   },
-  "portable_bytes": 15697816,
   "browser": "154.0.4258.37",
   "video": {
     "duration": 9.5,

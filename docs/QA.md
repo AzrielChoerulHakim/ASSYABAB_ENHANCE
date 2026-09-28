@@ -1,24 +1,66 @@
-# Render, inspect, correct, test
+# Verification: scroll film and optional atmosphere
 
-## What was actually exercised
+The procedural WebGL book/studio renderer has been removed. Verification now
+checks decoded video frames and page behavior, rather than old shader results.
 
-The self-contained export was rendered inside Chromium 144.0.7559.96 using Playwright, WebGL2 and ANGLE SwiftShader on Xvfb. All shaders ran in the browser; this is not a substitution of pre-rendered screenshots for interactive 3D. Browser navigation to network URLs was unavailable in the execution environment, so tests used `page.set_content` on the portable HTML. No hosted-site test is claimed.
+## Automated checks
 
-The regression report records the exact SHA-256 of every HTML/CSS/JavaScript source file. Its checks cover image decoding, menu focus isolation and keyboard wrap, search and literal input handling, all four program panels, day palettes and keyboard controls, teacher directory, gallery/lightbox focus return, actual 1280x800 PNG output, validated WhatsApp drafts, stale-draft invalidation, visit disclaimers, FAQ and source disclosure.
+`tests/test_browser.py` runs in a real Chromium-family browser using Playwright.
+It checks the served source and the standalone offline export separately:
 
-Eight viewport widths were checked: **320, 390, 700, 760, 768, 1024, 1440 and 1920 pixels**. Six animation progress values were rendered and checked for GL errors. Graphics-context loss/restoration, unavailable-GPU fallback, film start/stop, system reduced-motion changes, and essential no-JavaScript content were tested. No JavaScript errors or automatic network calls were observed in the tested portable-export sequence.
+- Actual H.264 decode and nonempty pixels; first, curtain, studio, reverse and last frames.
+- Scroll-to-time synchronization in both directions and coalesced seek completion.
+- Eleven viewport sizes, including 320x568, 320x740 and 667x375 phone layouts;
+  captions, chapter controls and the sound dock are checked for overlaps.
+- The smaller mobile encode on a fresh mobile page. Portrait layouts retain the
+  full composition; short landscape screens use a covering film with compact overlays.
+- Reduced motion freezes the frame, with explicit chapter navigation still available.
+- Missing/failed media retains the poster and working page controls.
+- Sound is off on arrival/reload; a real user click creates/resumes Web Audio;
+  volume changes and sound-off suspension work. Sound controls are inert behind menus.
+- Menu focus, search, curriculum, daily palettes, teacher profiles, gallery,
+  poster PNG export, contact draft validation, FAQ, and source disclosure.
+- Main information remains usable without JavaScript.
+- No page JavaScript errors, and no external network requests from the portable export.
 
-## Visual iterations
+`tests/test_video_source.py` checks byte-exact media embedding, missing-resource
+failure, and prevention of source overwrite in the portable exporter (3 checks).
+`node --check` validates the edited JavaScript entry points.
 
-1. Inspected the first landscape and cinematic frames. Replaced the overly striped mountain shading with subtle granular layers and near-ridge canopy detail.
-2. Rebalanced room lighting and reduced visual noise from dust/orbital lines. Shifted the Quran framing so its title does not obscure the book; pulled the studio camera back to separate the monitor from the large editorial heading.
-3. Inspected actual closed-book, moving-page, open-book and studio frames. Inspected editorial, daily palette, teacher, gallery, ending and narrow-screen layouts. Corrected an off-screen skip-link positioning issue and checked the final source again.
-4. Corrected a degenerate zero-length tube segment in geometry generation, then recompiled and rendered all cinematic stages. Rechecked keyboard focus and context restoration rather than declaring success after an initial screenshot. A stricter two-dimensional viewport check caught a stale WebGL canvas height when both viewport dimensions changed; a ResizeObserver now tracks settled container dimensions and the complete suite was rerun.
+The reports are `docs/test-report-source.json` and `docs/test-report.json` and
+include browser version, actual results and source hashes. Screenshots are
+reproducible with `python tools/render_check.py` and kept out of Git.
 
-Screenshots in the delivered source archive show the rendered design. `tools/render_check.py` regenerates four core screenshots with the same browser setup. `tests/test_browser.py` writes `test-report.json` and saves a real poster export.
+The final Windows run passed **96 served-source checks** and **97 portable-export
+checks** in Microsoft Edge 154.0.4258.37. The portable run includes the additional
+zero-network check. Both reports match the current application source bytes.
+The exporter unit suite passed all **3 tests**. The rebuilt portable HTML payload is
+15,697,816 UTF-8 bytes (about 15.0 MiB; local text-file line endings can add bytes).
+
+## Visual and media review
+
+The supplied film was inspected before editing, and graded frames were checked
+across the Quran, curtain and editing-desk compositions. The desktop and mobile
+encodes both fully decode to 228 frames with 38 keyframes and no audio track.
+Their metadata, provenance and hashes are recorded in `VIDEO.md`.
+
+Desktop and mobile screenshots were inspected. A narrow first caption on mobile,
+a dropped rapid chapter seek in paused mode, page collapse on manual pause,
+and caption/control collisions at short viewport heights were found and corrected.
+Captions were shortened to keep the film prominent.
+
+The optional water sound is synthesized locally. Sample buffers at 44.1, 48 and
+96 kHz were checked for finite values, headroom and continuity at the loop seam.
+This is a technical audio check, not proof of a recorded natural environment.
 
 ## Limits
 
-This is a presentation build, not a guarantee of visual approval. SwiftShader is software rendering, so these results do **not** measure laptop GPU frame rate, battery use, Core Web Vitals, Lighthouse, real mobile devices, Safari/iOS, Firefox, or all assistive technologies. Hosting, external photograph delivery, the YouTube video and WhatsApp service were not end-to-end tested. Fullscreen depends on browser permission and support.
+The browser tests run in headless Microsoft Edge/Chromium on Windows, not on
+physical phones. They do not establish Safari/iOS behavior, low-end GPU/decoder
+performance, mobile battery usage, all assistive technologies or Core Web Vitals.
+The ordinary site and portable file are both tested locally; hosted delivery must
+serve video with correct MIME type and byte ranges. GitHub repository publication
+is separate from configuring or deploying a public website.
 
-The ordinary website loads pinned documentary image URLs. The tested portable version embeds them. Fallback typography may vary across operating systems. No administrative backend, enrollment/payment system, automatic messaging, or appointment booking is claimed.
+The original supplied-video detail and provenance mark are retained. The video
+is illustrative, not documentary campus footage or Quran reading material.

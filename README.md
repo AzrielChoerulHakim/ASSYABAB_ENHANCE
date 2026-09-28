@@ -2,71 +2,91 @@
 
 **Dari ruang mengaji, menuju dunia.**
 
-An independent cinematic presentation website for Pesantren Multimedia Assyabab, built for Azriel Choerul Hakim. This repository does not modify the earlier prototype.
+A cinematic presentation for Pesantren Multimedia Assyabab. The Quran-to-studio
+sequence is now a graded, scroll-controlled film, replacing the procedural 3D
+book and computer scene. The existing illustrated mountains and birds remain.
 
-## Open and present
+## Preview
 
-Open `index.html` in a modern browser with WebGL2 enabled, or serve this directory as a static website. There is no npm installation, bundler, API key, paid service, or backend requirement.
-
-The opening contains **Putar perjalanan**, an optional approximately 35-second guided scroll. Scroll manually or use Escape to stop. Chapter navigation and **Lewati sinematik** let visitors go straight to the information. The search shortcut is Ctrl/Cmd+K. A fullscreen control and decorative-motion pause control appear after scrolling.
-
-### Fully offline presentation
-
-The supplied source archive includes a local cache of the documentary photographs. From a fresh GitHub clone, fetch those images once, then build the portable file:
+Open `index.html` directly, or use a current Node.js runtime:
 
 ```sh
-python3 tools/fetch_assets.py
-python3 tools/build_offline.py
+node tools/serve.mjs
 ```
 
-Open the resulting `ASSYABAB-CAHAYA.html`. It embeds CSS, JavaScript, SVG, and photographs and makes no automatic network requests. WhatsApp and YouTube links need internet only when opened. Do not replace the source `index.html` with this generated file.
+Visit `http://127.0.0.1:4173`. The local server supports video byte-range requests.
+No npm dependencies, backend, API key, or paid service is needed by the site.
+Deploy this folder to a static host that serves MP4 files as `video/mp4` and
+supports range requests. This commit does not change hosting configuration.
 
-**Photo transport:** the ordinary source website references seven public photographic assets pinned to commit `043c819554b6f804ddc5f7ffb9aa3965d21708c8` in the owner's earlier repository. The old repository is read-only for this project; none of its HTML, CSS, or JavaScript is loaded. `assets/manifest.json` records each URL and SHA-256. The offline builder checks those bytes before embedding. A static mirror can replace the URLs during production setup.
+## Film and atmosphere
 
-## Experience
+- The owner's supplied 10-second film is trimmed to 9.5 seconds, subtly graded,
+  muted, and encoded with a keyframe every six frames for responsive reverse seeking.
+- Native scroll controls the film with light, time-based smoothing. The page never
+  intercepts the wheel or forces scroll steps. Chapter buttons and a skip link remain.
+- Mobile uses a smaller encode; portrait layouts retain the entire 16:9 composition.
+  Short landscape screens use compact captions over a full-bleed film.
+  Missing video falls back to its poster
+  with an explicit retry; the rest of the website still works.
+- Reduced motion uses a stationary scene with explicit chapter selection. The
+  manual motion pause keeps the page height stable and freezes decorative motion.
+- Sparse leaves drift through the opening landscape; quiet rings and flecks appear
+  in the daily scene. Existing birds are preserved; no extra birds were added.
+- **Suara air** is optional synthesized water ambience, generated on-device with
+  Web Audio. It starts only after a click, has a volume control, fades off, and
+  suspends in hidden tabs. It is not a campus recording or a Quran recitation.
+- The optional **Putar perjalanan** guides the scroll for about 35 seconds. Escape,
+  manual scroll or touch stops it. Sound remains a separate opt-in control.
 
-- Original layered mountain illustration with atmosphere, foreground foliage, and distant birds.
-- An actual WebGL2 Quran/rehal/chamber scene with rounded geometry, opening cover, curved page meshes, shadows, floor reflections, light shafts, dust, and a pixel transition into an illustrative studio.
-- Source-grounded 4T and ten supporting curriculum groups; vision and mission overlays.
-- An on-device composition studio with three palettes and real 1280x800 PNG export.
-- Four-part daily journey with corresponding landscape palettes.
-- Teacher profiles, documentary gallery, source-index search, FAQ, and on-device WhatsApp draft preparation.
+See [video preparation and media checksums](docs/VIDEO.md).
 
-The graphics are illustrative, not a photorealistic scan or a reconstruction of the real campus. Interior ornamental flyleaves are not fabricated Quran verses. There is no autoplay sound. There is no admissions database, booking confirmation, AI chatbot, payment processing, analytics, or automatic message delivery.
+## Content and tools
 
-## Source organization
+The education, curriculum, daily-life, teacher and gallery sections remain. The
+composition studio exports a real 1280×800 PNG; search runs locally; contact forms
+prepare a WhatsApp draft without submitting or sending it automatically.
 
-```text
-index.html                Semantic page and accessible controls
-styles/main.css           Cinematic and editorial visual design
-src/content.js            Facts, curriculum, people, days, source search index
-src/landscape.js           Original Canvas 2D landscape
-src/renderer.js            Purpose-built WebGL2 rendering/shaders
-src/scenes.js              Quran, rehal, chamber, studio, camera choreography
-src/app.js                 Interaction director, gallery, search, draft and PNG tools
-assets/manifest.json       Pinned documentary images and checksums
-tools/build_offline.py     Standard-library portable exporter
-tools/fetch_assets.py      Verified photograph cache download
-tests/test_browser.py     Reproducible Playwright regression checks
+The photos are now mirrored locally. `assets/manifest.json` retains the pinned
+original URLs and SHA-256 values. The illustrations and supplied film are artistic
+interpretations, not documentation of the real campus. Small text in the film is
+not presented as Quran reading material. Institutional information is based on
+the owner-supplied profile; see `docs/CONTENT-SOURCES.md`.
+
+## Offline presentation
+
+```sh
+python tools/build_offline.py
 ```
 
-The implementation uses native JavaScript, Canvas 2D and WebGL2, **not Three.js or GSAP**. Fonts use a shared local system stack; different operating systems may select different fallback fonts.
+The generated `ASSYABAB-CAHAYA.html` embeds scripts, styles, photos, posters and
+both video encodes (about 16 MB). It works without a server. WhatsApp and YouTube
+need internet only when their links are opened. Keep this export separate from
+`index.html`. If local documentary assets are missing, run `python tools/fetch_assets.py`.
 
 ## Verification
 
-See `docs/QA.md` and `docs/test-report.json`. The portable export was rendered and exercised in Chromium 144 using WebGL2/ANGLE SwiftShader on a virtual display. This is an actual browser graphics test, not a hardware-performance, Lighthouse, Safari, or deployed-network test. The visual review included the opening, closed/open/moving book, studio transition, educational sections, day palettes, profiles, gallery and mobile layouts.
-
-For the full regression suite, install Python Playwright and Pillow plus Chromium. Start Xvfb on Linux when needed:
-
 ```sh
-Xvfb :99 -screen 0 1600x1000x24 -nolisten tcp &
-ASSYABAB_TEST_DISPLAY=:99 python3 tests/test_browser.py
+python -m unittest discover -s tests -p test_video_source.py
+python tests/test_browser.py
 ```
 
-These are development-only tools. Visitors do not need them.
+Browser checks require Python Playwright, Pillow and Chromium/Chrome/Edge.
+`ASSYABAB_TEST_BROWSER` selects an installed Chromium-family executable;
+`ASSYABAB_TEST_URL=http://127.0.0.1:4173` tests the served build instead of the
+portable export. See `docs/QA.md` for the exact verification and its limits.
 
-## Content status
+## Source map
 
-Facts and photographic documentation are based on the owner-supplied `Pesantren Assyabab Profile and Programs.pptx`. See `docs/CONTENT-SOURCES.md`. Confirm roles, contacts, licensing of photographs, admissions, diploma arrangements, fees, quotas and aid criteria with the institution before an official launch. The design mark and editorial language are proposals, not an asserted official identity. Search indexing is disabled intentionally for this presentation build.
+| Path | Purpose |
+| --- | --- |
+| `src/scroll-video.js` | Lazy loading, coalesced seeking, smoothing and fallback |
+| `src/ambience.js` | Optional water audio and subtle landscape details |
+| `src/landscape.js` | Existing native Canvas landscapes and birds |
+| `src/app.js` | Page interaction, chapters, dialogs and creative tools |
+| `styles/film.css` | Responsive film composition |
+| `styles/ambience.css` | Leaves, ripples and audio controls |
+| `tools/prepare_video.py` | Reproducible video grade and encoding |
 
-Committing these files does not itself enable GitHub Pages or create a Vercel deployment. The static build and offline presentation are independent of any hosting setup.
+This is still a presentation site: no enrollment database, payments, analytics,
+or automatic message delivery. Search indexing remains intentionally disabled.

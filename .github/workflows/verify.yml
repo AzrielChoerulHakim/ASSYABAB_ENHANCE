@@ -16,6 +16,8 @@ jobs:
           for file in src/*.js; do node --check "$file"; done
       - name: Check Python syntax
         run: python3 -m compileall -q tools tests
+      - name: Verify portable media embedding
+        run: python3 -m unittest discover -s tests -p test_video_source.py
       - name: Fetch checksum-pinned photographs
         run: python3 tools/fetch_assets.py
       - name: Build portable presentation

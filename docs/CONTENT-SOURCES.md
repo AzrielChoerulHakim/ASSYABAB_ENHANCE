@@ -18,11 +18,13 @@ Primary source: the owner's `Pesantren Assyabab Profile and Programs.pptx`. No p
 
 ## Photographs
 
-The seven documentary images are the same owner-provided photographs already exported in the earlier project: halaqah (slide 10), Mudir portrait (6), mosque (21), multimedia activity (19), accommodation (22), field (20), mountain view (27). The new website pins their public URLs to an immutable commit and records SHA-256 values in `assets/manifest.json`. It does not modify the earlier repository. Image detail is limited by the existing exports; no generative enhancement or invented subjects were used.
+The seven documentary images are the same owner-provided photographs already exported in the earlier project: halaqah (slide 10), Mudir portrait (6), mosque (21), multimedia activity (19), accommodation (22), field (20), mountain view (27). The website serves local mirrors of those images and records their original immutable URLs and SHA-256 values in `assets/manifest.json`. It does not modify the earlier repository. Image detail is limited by the existing exports; no generative enhancement or invented subjects were used.
 
 ## Original interpretation
 
-The moving landscape, chamber, rehal, Quran model, lanterns, page rig, dust, reflections, camera movement, and monitor studio are original digital illustrations. They are not presented as an accurate model of the campus or an actual classroom recording. The interior book surfaces are ornamental flyleaves, not simulated scripture; the cover bears only the book title. The poster tool is explicitly a local design demonstration, not an archive of student work.
+The landscape and poster tool are original digital illustrations. The current cinematic sequence is an edited version of the owner's supplied `18622.mp4`: a Quran on a rehal, a curtain transition, and a multimedia workstation. It replaces the old procedural 3D scene. It is not presented as real campus footage or as Quran reading material. The source composition and embedded provenance mark are retained; grading, trimming and encoding are documented in `docs/VIDEO.md`. The poster tool is a local design demonstration, not an archive of student work.
+
+The optional water sound is synthesized in the browser. It is not a field recording, adhan, or Quran recitation. There is no externally sourced music or new audio licensing dependency.
 
 Headlines, chapter names, proposed mark, color palette and cinematic narrative are creative proposals, not quotations or approved official branding.
 
